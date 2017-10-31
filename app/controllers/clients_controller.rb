@@ -1,11 +1,11 @@
 class ClientsController < ApplicationController
-    
+
     def index
-        render json: { clients: [] }
+        render json: { clients: Client.all }
     end
 
     def show
-        render json: { client: [] }
+        render json: { client: Client.find(params[:id]) }
     end
 
     def create
@@ -16,6 +16,5 @@ class ClientsController < ApplicationController
 
     def destroy
     end
-
 
 end
