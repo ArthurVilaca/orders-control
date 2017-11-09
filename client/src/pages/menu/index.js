@@ -30,8 +30,15 @@ class Menu extends Component {
                         <MenuItem
                             onClick={() => {
                                 this.props.history.push('/clients')
-                            }}
-                            >Clients</MenuItem>
+                            }}>
+                            Clients
+                        </MenuItem>
+                        <MenuItem
+                            onClick={() => {
+                                this.props.history.push('/login')
+                            }}>
+                            Sair
+                        </MenuItem>
                 </Drawer>
             </div>
         );

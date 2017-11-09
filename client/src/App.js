@@ -8,6 +8,7 @@ import Login from './pages/login'
 import Home from './pages/home'
 import Menu from './pages/menu'
 import Clients from './pages/clients'
+import Client from './pages/client'
 
 class App extends Component {
   render() {
@@ -19,6 +20,8 @@ class App extends Component {
           { currentPath ===  "/" ? <Redirect to={"/login"}/> : null }
           <Route exact path="/login" component={Login}/>
           <Route exact path="/clients" component={Clients}/>
+          <Route exact path="/client/new" component={Client}/>
+          <Route exact path="/client/:id" component={Client}/>
           <Route exact path="/home" component={Home}/>
         </div>
       </MuiThemeProvider>

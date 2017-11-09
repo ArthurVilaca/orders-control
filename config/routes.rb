@@ -3,8 +3,9 @@ Rails.application.routes.draw do
 
   # get "/app", :to => 'welcome#index'
 
-  resources :orders
-
-  resources :clients
+  namespace :api do
+    resources :orders
+    resources :clients
+  end
 
 end
