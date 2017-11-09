@@ -26,12 +26,24 @@ class Menu extends Component {
                     docked={false}
                     onRequestChange={(open) => this.setState({open})}>
 
-                        <MenuItem>Pedidos</MenuItem>
+                        <MenuItem
+                            onClick={() => {
+                                this.props.history.push('/orders')
+                            }}>
+                            Pedidos
+                        </MenuItem>
                         <MenuItem
                             onClick={() => {
                                 this.props.history.push('/clients')
-                            }}
-                            >Clients</MenuItem>
+                            }}>
+                            Clients
+                        </MenuItem>
+                        <MenuItem
+                            onClick={() => {
+                                this.props.history.push('/login')
+                            }}>
+                            Sair
+                        </MenuItem>
                 </Drawer>
             </div>
         );

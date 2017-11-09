@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom'
 
-import './clients.css';
+import './orders.css';
 
 import axios from 'axios';
 import moment from 'moment';
@@ -18,54 +18,49 @@ const style = {
     right: '50px',
 };
 
-class Clients extends Component {
+class Orders extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            clients: null
+            orders: null
         }
     }
 
     componentDidMount() {
-        axios.get('/api/clients')
+        axios.get('/api/orders')
             .then((response) => {
-                this.setState({ clients: response.data.clients });
-            });
-    }
-
-    delete(id) {
-        axios.delete('/api/clients/' + id)
-            .then((response) => {
-                this.componentDidMount();
+                this.setState({ orders: response.data.orders });
             });
     }
 
     render() {
-        if(!this.state.clients) {
+        if(!this.state.orders) {
             return null;
         }
         return (
             <div className="content">
                 {
-                    this.state.clients.map( (client) => {
+                    this.state.orders.map( (order) => {
                         return (
-                            <Card key={client.id}>
-                                <CardTitle title={ client.name } />
+                            <Card key={order.id}>
+                                <CardTitle title={ order.id } subtitle={ order.client.name } />
                                 <CardText>
-                                    CPF: { client.registration }
+                                    Produto: { order.product.name }
                                     <br />
-                                    Data Registro: { moment(client.created_at).format('L') }
+                                    Data Pedido: { moment(order.created_at).format('L') }
+                                    <br />
+                                    Total: R$ { order.total }
+                                    <br />
                                 </CardText>
                                 <CardActions>
                                     <FlatButton
-                                        label="Editar"
+                                        label="Operações"
                                         onClick={() => {
-                                            this.props.history.push('/client/' + client.id )
+                                            this.props.history.push('/order/' + order.id )
                                         }} />
                                     <FlatButton
-                                        label="Excluir"
+                                        label="Cancelar Pedido"
                                         onClick={() => {
-                                            this.delete(client.id);
                                         }}
                                         />
                                 </CardActions>
@@ -73,18 +68,9 @@ class Clients extends Component {
                         )
                     })
                 }
-
-                <FloatingActionButton
-                    style={style}
-                    onClick={() => {
-                        this.props.history.push('/client/new' )
-                    }}
-                    >
-                    <ContentAdd />
-                </FloatingActionButton>
             </div>
         );
     }
 }
 
-export default withRouter(Clients)
+export default withRouter(Orders)

@@ -1,4 +1,4 @@
-class OrdersController < ApplicationController
+class Api::OrdersController < ApplicationController
 
     def index # display all orders
         render json: { orders: JSON.parse(Order.includes(:client, :product).all.to_json(include: [:client, :product])) }
