@@ -3,9 +3,12 @@ Rails.application.routes.draw do
 
   # get "/app", :to => 'welcome#index'
 
+  root to: 'application#index'
+
   namespace :api do
     resources :orders
     resources :clients
   end
 
+  get '*path', to: 'application#index'
 end

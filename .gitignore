@@ -21,3 +21,10 @@
 /yarn-error.log
 
 .byebug_history
+
+# Public folder generated files
+public/asset-manifest.json
+public/index.html
+public/manifest.json
+public/service-worker.js
+public/static/*
