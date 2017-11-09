@@ -3,4 +3,8 @@ Rails.application.routes.draw do
 
   # get "/app", :to => 'welcome#index'
 
+  resources :orders
+
+  resources :clients
+
 end
