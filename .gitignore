@@ -23,3 +23,10 @@
 .byebug_history
 
 config/database.yml
+
+# Public folder generated files
+public/asset-manifest.json
+public/index.html
+public/manifest.json
+public/service-worker.js
+public/static/*
