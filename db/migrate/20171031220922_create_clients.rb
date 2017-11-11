@@ -1,6 +1,6 @@
 class CreateClients < ActiveRecord::Migration[5.1]
   def change
-    create_table :clients do |t|
+    create_table :clients, id: :uuid do |t|
       t.string :name
       t.string :registration
       t.string :email
