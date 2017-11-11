@@ -3,6 +3,8 @@ Rails.application.routes.draw do
 
   # get "/app", :to => 'welcome#index'
 
+  mount Swaggard::Engine, at: '/swagger/'
+
   root to: 'application#index'
 
   namespace :api do

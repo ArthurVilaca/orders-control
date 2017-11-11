@@ -43,8 +43,9 @@ module Api
     end
 
     def order_params
-      params.require(:order).permit(:total, :instalments, :value)
+      params.permit(:total, :instalments, :value)
     end
+
     def client_params
       params.require(:client).permit(:name, :registration, :email, :zip_code, :address, :city, :state, :country)
     end
