@@ -2,17 +2,13 @@
 # @attr [float] total
 # @attr [integer] instalments
 # @attr [integer] status
-# @attr [date-time] created_at
-# @attr [date-time] updated_at
-# @attr [ClientSerializer] client
-# @attr [Array<ProductSerializer>] products
-class OrderSerializer < ActiveModel::Serializer
+# @attr [Input::ClientSerializer] client
+# @attr [Array<Input::ProductSerializer>] products
+class Input::OrderSerializer < ActiveModel::Serializer
   attribute :id
   attribute :total
   attribute :instalments
   attribute :status
-  attribute :created_at
-  attribute :updated_at
 
   has_one :client, serializer: ClientSerializer
   has_many :products, serializer: ProductSerializer
