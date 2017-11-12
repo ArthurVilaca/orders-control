@@ -85,7 +85,7 @@ Swaggard.configure do |config|
   # config.swagger_version = "2.0"
 
   # The title of the application/API.
-  # config.title = ""
+  config.title = 'API de Pedidos'
 
   # The Terms of Service for the API.
   # config.tos = ""

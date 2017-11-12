@@ -2,15 +2,29 @@ module Api
   class OrdersController < ApplicationController
     before_action :set_order, only: %i[show update destroy]
 
+    # @response_status 200
+    # @response_root orders
+    # @response_class Array<OrderSerializer>
     def index
       orders = Order.includes(:client, :products).all
       render json: { orders: JSON.parse(orders.to_json(include: [:client, :products])) }
     end
 
+    # @response_status 200
+    # @response_root order
+    # @response_class OrderSerializer
     def show
       render_show_order
     end
 
+    # @body_parameter [float] total
+    # @body_parameter [integer] instalments
+    # @body_parameter [hash] client
+    # @body_parameter [array] products
+    # @body_parameter [integer] status - 0: criado, 1: pago
+    # @response_status 200
+    # @response_root order
+    # @response_class OrderSerializer
     def create
       client = Client.find_or_create_by(email: params[:client][:email]).update(client_params)
       products_params = params[:products] || []
@@ -26,6 +40,14 @@ module Api
       end
     end
 
+    # @body_parameter [float] total
+    # @body_parameter [integer] instalments
+    # @body_parameter [hash] client
+    # @body_parameter [array] products
+    # @body_parameter [integer] status - 0: criado, 1: pago
+    # @response_status 200
+    # @response_root order
+    # @response_class OrderSerializer
     def update
       if @order.update(order_params)
         render_show_order
@@ -43,7 +65,7 @@ module Api
     end
 
     def order_params
-      params.permit(:total, :instalments, :value)
+      params.permit(:total, :instalments, :status)
     end
 
     def client_params
