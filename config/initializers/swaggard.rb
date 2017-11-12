@@ -51,7 +51,7 @@ Swaggard.configure do |config|
   # config.contact_url = ""
 
   # Specify where to look for your controllers
-  # config.controllers_path = "#{Rails.root}/app/controllers/**/*.rb"
+  config.controllers_path = "#{Rails.root}/app/controllers/api/**/*.rb"
 
   # Specify a default content type for requests to use in SwaggerUI.
   # See https://github.com/adrian-gomez/swaggard#default-content-type for more info
