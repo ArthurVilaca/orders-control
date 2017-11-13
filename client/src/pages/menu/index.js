@@ -28,6 +28,12 @@ class Menu extends Component {
 
                         <MenuItem
                             onClick={() => {
+                                this.props.history.push('/home')
+                            }}>
+                            Home Page
+                        </MenuItem>
+                        <MenuItem
+                            onClick={() => {
                                 this.props.history.push('/orders')
                             }}>
                             Pedidos

@@ -8,15 +8,6 @@ import moment from 'moment';
 
 import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-
-const style = {
-    marginRight: 20,
-    position: 'fixed',
-    bottom: '15px',
-    right: '50px',
-};
 
 class Orders extends Component {
     constructor(props) {
