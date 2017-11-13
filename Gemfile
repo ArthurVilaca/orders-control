@@ -6,6 +6,7 @@ git_source(:github) do |repo_name|
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+gem 'active_model_serializers'
 gem 'rails', '~> 5.1.4'
 gem 'unicorn'
 # Use postgresql as the database for Active Record
@@ -32,6 +33,8 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+
+gem 'swaggard', github: 'aleph-engineering/swaggard', branch: 'fix_descriptions'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
