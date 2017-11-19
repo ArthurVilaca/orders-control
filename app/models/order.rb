@@ -6,4 +6,6 @@ class Order < ApplicationRecord
   validates :status, presence: true
 
   enum status: %i[created paid]
+
+  accepts_nested_attributes_for :client, :products
 end
