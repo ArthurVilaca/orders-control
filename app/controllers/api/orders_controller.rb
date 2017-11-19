@@ -19,7 +19,7 @@ module Api
 
     # @body_parameter [float] total
     # @body_parameter [integer] instalments
-    # @body_parameter [integer] status - 0: criado, 1: pago
+    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado
     # @body_parameter [Input::ClientSerializer] client
     # @body_parameter [array<Input::ProductSerializer>] products
     # @response_status 200
@@ -43,7 +43,7 @@ module Api
 
     # @body_parameter [float] total
     # @body_parameter [integer] instalments
-    # @body_parameter [integer] status - 0: criado, 1: pago
+    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado
     # @body_parameter [Input::ClientSerializer] client
     # @body_parameter [array<Input::ProductSerializer>] products
     # @response_status 200
