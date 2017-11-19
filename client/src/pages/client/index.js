@@ -23,7 +23,7 @@ class Client extends Component {
                     this.setState({ client: response.data.client });
                 });
         } else {
-            this.state.client = {};
+            this.setState({ client: {} });
         }
     }
 

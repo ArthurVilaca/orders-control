@@ -4,9 +4,11 @@ import { withRouter } from 'react-router-dom'
 import './order.css';
 
 import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
+import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
 
 import axios from 'axios';
+import moment from 'moment';
 
 class Order extends Component {
     constructor(props) {
@@ -20,43 +22,44 @@ class Order extends Component {
         if(this.props.match.params.id) {
             axios.get('/api/orders/' + this.props.match.params.id)
                 .then((response) => {
-                    this.setState({ client: response.data.client });
+                    this.setState({ order: response.data.order });
                 });
         } else {
-            this.state.order = {};
+            this.setState({ order: {} });
         }
     }
 
-    save() {
-        if(this.props.match.params.id) {
-            axios.put('/api/orders/' + this.props.match.params.id, this.state.order)
-                .then((response) => {
-                    this.props.history.push('/orders');
-                });
-        } else {
-            axios.post('/api/orders', this.state.order)
-                .then((response) => {
-                    this.props.history.push('/orders');
-                });
-        }
+    toPicking() {
+        
     }
 
     render() {
         if(!this.state.order) {
             return null;
         }
-        let client = this.state.order;
+        let order = this.state.order;
         return (
             <div className="content">
                 <div>
                     <div className="div">
-                        <RaisedButton
-                            className="btn-save"
-                            onClick={() => {
-                                this.save()
-                            }} 
-                            backgroundColor="#2789BC" 
-                            label="Salvar" />
+                        <Card key={order.id}>
+                            <CardTitle title={ order.id } subtitle={ order.client.name } />
+                            <CardText>
+                                Produto: { order.product.name }
+                                <br />
+                                Data Pedido: { moment(order.created_at).format('L') }
+                                <br />
+                                Total: R$ { order.total }
+                                <br />
+                            </CardText>
+                            <CardActions>
+                                <FlatButton
+                                    label="Enviar para picking"
+                                    onClick={() => {
+                                        this.toPicking();
+                                    }} />
+                            </CardActions>
+                        </Card>
                     </div>
                 </div>
             </div>
