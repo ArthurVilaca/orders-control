@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :orders do
-      member do
+      collection do
         post :picking
       end
     end

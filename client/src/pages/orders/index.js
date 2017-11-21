@@ -34,13 +34,15 @@ class Orders extends Component {
                     this.state.orders.map( (order) => {
                         return (
                             <Card key={order.id}>
-                                <CardTitle title={ order.id } subtitle={ order.name } />
+                                <CardTitle title={ order.id } subtitle={ order.client.name } />
                                 <CardText>
-                                    { order.products.map( (product) =>  {
-                                        <br />
-                                        Produto: { product.name }
-                                        })
-                                    }
+                                    { order.products.map( (product) =>  (
+                                            <div>
+                                                Produto: { product.name }
+                                                <br />
+                                            </div>
+                                        )
+                                    )}
                                     <br />
                                     Status: { order.status }
                                     <br />

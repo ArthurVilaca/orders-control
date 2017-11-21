@@ -25,9 +25,20 @@ class Order extends Component {
     }
 
     toPicking() {
-        axios.post('/api/orders/picking', this.order)
+        axios.post('/api/orders/picking', this.state.order)
             .then((response) => {
-                console.log(response);
+                if(response) {
+                    this.componentDidMount();
+                }
+            });
+    }
+
+    checkPicking() {
+        axios.get('/api/orders/picking')
+            .then((response) => {
+                if(response) {
+                    this.componentDidMount();
+                }
             });
     }
 
@@ -41,13 +52,15 @@ class Order extends Component {
                 <div>
                     <div className="div">
                         <Card key={order.id}>
-                            <CardTitle title={ order.id } subtitle={ order.name } />
+                            <CardTitle title={ order.id } subtitle={ order.client.name } />
                             <CardText>
-                                { order.products.map( (product) =>  {
-                                    <br />
-                                    Produto: { product.name }
-                                    })
-                                }
+                                { order.products.map( (product) =>  (
+                                    <div>
+                                        Produto: { product.name }
+                                        <br />
+                                    </div>
+                                    )
+                                )}
                                 <br />
                                 Status: { order.status }
                                 <br />
@@ -59,7 +72,11 @@ class Order extends Component {
                                 <FlatButton
                                     label="Enviar para picking"
                                     onClick={() => {
-                                        this.toPicking();
+                                        if(this.state.order.status == 'checking') {
+                                            this.checkPicking();
+                                        } else if(this.state.order.status == 'created') {
+                                            this.toPicking();
+                                        }
                                     }} />
                             </CardActions>
                         </Card>

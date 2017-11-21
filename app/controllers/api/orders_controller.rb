@@ -1,3 +1,5 @@
+require 'httparty'
+
 module Api
   class OrdersController < ApplicationController
     before_action :set_order, only: %i[show update destroy]
@@ -19,7 +21,7 @@ module Api
 
     # @body_parameter [float] total
     # @body_parameter [integer] instalments
-    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado
+    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado, 3: chamado criado
     # @body_parameter [Input::ClientSerializer] client
     # @body_parameter [array<Input::ProductSerializer>] products
     # @response_status 200
@@ -43,7 +45,7 @@ module Api
 
     # @body_parameter [float] total
     # @body_parameter [integer] instalments
-    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado
+    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado, 3: chamado criado
     # @body_parameter [Input::ClientSerializer] client
     # @body_parameter [array<Input::ProductSerializer>] products
     # @response_status 200
@@ -91,15 +93,28 @@ module Api
     end
 
     def picking
-      url_picking = 'localhost/index.php'
-      @result = HTTParty.post(url_picking,
-        :body => {
-                :status => 0,
-                :idProduto => "00000000-0000-0000-0000-000000000000",
-                :descricao => "string",
-                :quantidade => 0
-              }.to_json,
-        :headers => { 'Content-Type' => 'application/json' } )
+      order = Order.find(params[:id])
+      params[:products].each { |value|
+        product = Product.find(value[:id])
+        @url_picking = 'http://chamadoapi.azurewebsites.net/chamado'
+        @result = HTTParty.post(@url_picking.to_str,
+          :body => {
+                  :status => 0,
+                  :idProduto => "00000000-0000-0000-0000-000000000000",
+                  :descricao => "string",
+                  :quantidade => 0
+                }.to_json,
+          :headers => { 'Content-Type' => 'application/json' } )
+
+        @ticket = Ticket.new( ticket: @result.parsed_response )
+        @ticket.order = order
+        @ticket.product = product
+
+        @ticket.save
+      }
+
+      order.update status: :checking
+      render json: @result.parsed_response
     end
   end
 end
