@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom'
 
 import './order.css';
 
-import RaisedButton from 'material-ui/RaisedButton';
 import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 
@@ -19,18 +18,17 @@ class Order extends Component {
     }
 
     componentDidMount() {
-        if(this.props.match.params.id) {
-            axios.get('/api/orders/' + this.props.match.params.id)
-                .then((response) => {
-                    this.setState({ order: response.data.order });
-                });
-        } else {
-            this.setState({ order: {} });
-        }
+        axios.get('/api/orders/' + this.props.match.params.id)
+            .then((response) => {
+                this.setState({ order: response.data.order });
+            });
     }
 
     toPicking() {
-        
+        axios.post('/api/orders/picking', this.order)
+            .then((response) => {
+                console.log(response);
+            });
     }
 
     render() {
@@ -43,14 +41,19 @@ class Order extends Component {
                 <div>
                     <div className="div">
                         <Card key={order.id}>
-                            <CardTitle title={ order.id } subtitle={ order.client.name } />
+                            <CardTitle title={ order.id } subtitle={ order.name } />
                             <CardText>
-                                Produto: { order.product.name }
+                                { order.products.map( (product) =>  {
+                                    <br />
+                                    Produto: { product.name }
+                                    })
+                                }
+                                <br />
+                                Status: { order.status }
                                 <br />
                                 Data Pedido: { moment(order.created_at).format('L') }
                                 <br />
                                 Total: R$ { order.total }
-                                <br />
                             </CardText>
                             <CardActions>
                                 <FlatButton

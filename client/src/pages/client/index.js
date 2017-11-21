@@ -17,7 +17,7 @@ class Client extends Component {
     }
 
     componentDidMount() {
-        if(this.props.match.params.id) {
+        if(this.props.match.params.id && this.props.match.params.id !== 'new') {
             axios.get('/api/clients/' + this.props.match.params.id)
                 .then((response) => {
                     this.setState({ client: response.data.client });
@@ -28,7 +28,7 @@ class Client extends Component {
     }
 
     save() {
-        if(this.props.match.params.id) {
+        if(this.props.match.params.id && this.props.match.params.id !== 'new') {
             axios.put('/api/clients/' + this.props.match.params.id, this.state.client)
                 .then((response) => {
                     this.props.history.push('/clients');

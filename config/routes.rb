@@ -8,7 +8,11 @@ Rails.application.routes.draw do
   root to: 'application#index'
 
   namespace :api do
-    resources :orders
+    resources :orders do
+      member do
+        post :picking
+      end
+    end
     resources :clients
   end
 

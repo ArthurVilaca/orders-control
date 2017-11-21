@@ -71,5 +71,17 @@ module Api
     def client_params
       params.require(:client).permit(:name, :registration, :email, :zip_code, :address, :city, :state, :country)
     end
+
+    def picking
+      url_picking = 'localhost/index.php'
+      @result = HTTParty.post(url_picking,
+        :body => {
+                :status => 0,
+                :idProduto => "00000000-0000-0000-0000-000000000000",
+                :descricao => "string",
+                :quantidade => 0
+              }.to_json,
+        :headers => { 'Content-Type' => 'application/json' } )
+    end
   end
 end

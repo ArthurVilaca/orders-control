@@ -8,4 +8,4 @@
 
 c = Client.create(name: "Miojo", email: 'miojo@todoscomem.com')
 p = Product.create(name: "Galaxy S8", description:"smartphone")
-Order.create( products: [p], client: c, total: 120.50, instalments: 2, value: 60.25 )
+Order.create( products: [p], client: c, total: 120.50, instalments: 2, status: 0 )
