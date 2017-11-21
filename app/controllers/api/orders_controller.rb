@@ -19,14 +19,15 @@ module Api
 
     # @body_parameter [float] total
     # @body_parameter [integer] instalments
-    # @body_parameter [integer] status - 0: criado, 1: pago
+    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado
     # @body_parameter [Input::ClientSerializer] client
     # @body_parameter [array<Input::ProductSerializer>] products
     # @response_status 200
     # @response_root order
     # @response_class OrderSerializer
     def create
-      client = Client.find_or_create_by(email: params[:client][:email]).update(client_params)
+      client = Client.find_or_initialize_by(email: client_params[:email])
+      client_params.each{ |key, value| client[key] = value }
       products_params = params[:products] || []
       products = products_params.map{|product_param| Product.find_or_initialize_by(id: product_param[:id], name: product_param[:name], description: product_param[:description])}
       @order = Order.new(order_params)
@@ -42,14 +43,31 @@ module Api
 
     # @body_parameter [float] total
     # @body_parameter [integer] instalments
-    # @body_parameter [integer] status - 0: criado, 1: pago
+    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado
     # @body_parameter [Input::ClientSerializer] client
     # @body_parameter [array<Input::ProductSerializer>] products
     # @response_status 200
     # @response_root order
     # @response_class OrderSerializer
     def update
+      client = Client.find_or_initialize_by(email: client_params[:email])
+      client_params.to_h.compact.each{ |key, value| client[key] = value }
+      products_params = params[:products] || []
+
+      @order.client.assign_attributes(client_params) if params[:client]
+      products_params.each do |product_param|
+        current_product = @order.products.all.find{|p| p.id == product_param[:id]}
+        if current_product
+          current_product.name = product_param[:name]
+          current_product.description = product_param[:description]
+          current_product.save!
+        else
+          @order.products.build(id: product_param[:id], name: product_param[:name], description: product_param[:description])
+        end
+      end
+
       if @order.update(order_params)
+        @order.products.reload
         render_show_order
       else
         render_validation_errors(@order)
@@ -69,7 +87,7 @@ module Api
     end
 
     def client_params
-      params.require(:client).permit(:name, :registration, :email, :zip_code, :address, :city, :state, :country)
+      params.require(:client).permit(:id, :name, :registration, :email, :zip_code, :address, :city, :state, :country)
     end
 
     def picking
