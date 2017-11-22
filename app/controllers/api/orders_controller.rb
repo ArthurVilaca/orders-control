@@ -99,10 +99,10 @@ module Api
         product = Product.find(value[:id])
         @result = HTTParty.post(@url_picking.to_str,
           :body => {
-                  :status => 0,
-                  :idProduto => value[:id],
-                  :descricao => value[:description],
-                  :quantidade => 1
+                  status: 2,
+                  idProduto: value[:id],
+                  descricao: 'Retirada de produto no picking',
+                  quantidade: 1,
                 }.to_json,
           :headers => { 'Content-Type' => 'application/json' } )
 
