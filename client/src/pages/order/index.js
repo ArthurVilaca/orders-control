@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom'
 
 import './order.css';
 
-import RaisedButton from 'material-ui/RaisedButton';
 import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 
@@ -14,29 +13,44 @@ class Order extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            order: null
+            order: null,
+            tickets: null
         }
     }
 
     componentDidMount() {
-        if(this.props.match.params.id) {
-            axios.get('/api/orders/' + this.props.match.params.id)
-                .then((response) => {
-                    this.setState({ order: response.data.order });
-                });
-        } else {
-            this.setState({ order: {} });
-        }
+        axios.get('/api/orders/' + this.props.match.params.id)
+            .then((response) => {
+                this.setState({ order: response.data.order });
+            });
     }
 
     toPicking() {
-        
+        axios.post('/api/orders/' + this.state.order.id + '/picking', this.state.order)
+            .then((response) => {
+                if(response) {
+                    this.componentDidMount();
+                }
+            });
+    }
+
+    checkPicking() {
+        axios.get('/api/orders/' + this.state.order.id + '/picking')
+            .then((response) => {
+                if(response) {
+                    this.setState({ tickets: response.data })
+                }
+            });
     }
 
     render() {
         if(!this.state.order) {
             return null;
         }
+        if(this.state.order.status !== 'created' && this.state.tickets === null) {
+            this.checkPicking();
+        }
+
         let order = this.state.order;
         return (
             <div className="content">
@@ -45,21 +59,47 @@ class Order extends Component {
                         <Card key={order.id}>
                             <CardTitle title={ order.id } subtitle={ order.client.name } />
                             <CardText>
-                                Produto: { order.product.name }
+                                { order.products.map( (product) =>  (
+                                    <div>
+                                        Produto: { product.name }
+                                        <br />
+                                    </div>
+                                    )
+                                )}
+                                <br />
+                                Status: { order.status }
                                 <br />
                                 Data Pedido: { moment(order.created_at).format('L') }
                                 <br />
                                 Total: R$ { order.total }
-                                <br />
                             </CardText>
                             <CardActions>
                                 <FlatButton
-                                    label="Enviar para picking"
+                                    label={ order.status === 'created' ? 'Enviar para picking' : 'Checar picking' }
                                     onClick={() => {
-                                        this.toPicking();
+                                        if(this.state.order.status === 'checking') {
+                                            this.checkPicking();
+                                        } else if(this.state.order.status === 'created') {
+                                            this.toPicking();
+                                        }
                                     }} />
                             </CardActions>
                         </Card>
+                    </div>
+                    <div className="tickets">
+                        {
+                            !this.state.tickets ? null : 
+                            <div>
+                                { this.state.tickets.map( (ticket) =>  (
+                                    <div className="tickets-product">
+                                        Produto: { ticket.product.name }
+                                        <br />
+                                        Chamado: { ticket.motivo }
+                                    </div>
+                                    )
+                                )}
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

@@ -36,16 +36,23 @@ class Orders extends Component {
                             <Card key={order.id}>
                                 <CardTitle title={ order.id } subtitle={ order.client.name } />
                                 <CardText>
-                                    Produto: { order.product.name }
+                                    { order.products.map( (product) =>  (
+                                            <div>
+                                                Produto: { product.name }
+                                                <br />
+                                            </div>
+                                        )
+                                    )}
+                                    <br />
+                                    Status: { order.status }
                                     <br />
                                     Data Pedido: { moment(order.created_at).format('L') }
                                     <br />
                                     Total: R$ { order.total }
-                                    <br />
                                 </CardText>
                                 <CardActions>
                                     <FlatButton
-                                        label="Operações"
+                                        label="Acompanhamento"
                                         onClick={() => {
                                             this.props.history.push('/order/' + order.id )
                                         }} />
