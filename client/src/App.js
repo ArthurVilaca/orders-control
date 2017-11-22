@@ -4,7 +4,6 @@ import './App.css';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-import Login from './pages/login'
 import Home from './pages/home'
 import Menu from './pages/menu'
 import Clients from './pages/clients'
@@ -20,7 +19,6 @@ class App extends Component {
         <div className="App">
           <Menu />
           { currentPath ===  "/" && <Redirect to={"/home"}/> }
-          <Route exact path="/login" component={Login}/>
           <Route exact path="/clients" component={Clients}/>
           <Route exact path="/client/new" component={Client}/>
           <Route exact path="/client/:id" component={Client}/>
