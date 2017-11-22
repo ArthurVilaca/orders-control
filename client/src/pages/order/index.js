@@ -13,7 +13,8 @@ class Order extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            order: null
+            order: null,
+            tickets: null
         }
     }
 
@@ -25,7 +26,7 @@ class Order extends Component {
     }
 
     toPicking() {
-        axios.post('/api/orders/picking', this.state.order)
+        axios.post('/api/orders/' + this.state.order.id + '/picking', this.state.order)
             .then((response) => {
                 if(response) {
                     this.componentDidMount();
@@ -34,10 +35,10 @@ class Order extends Component {
     }
 
     checkPicking() {
-        axios.get('/api/orders/picking')
+        axios.get('/api/orders/' + this.state.order.id + '/picking')
             .then((response) => {
                 if(response) {
-                    this.componentDidMount();
+                    this.setState({ tickets: response.data })
                 }
             });
     }
@@ -46,6 +47,10 @@ class Order extends Component {
         if(!this.state.order) {
             return null;
         }
+        if(this.state.order.status !== 'created' && this.state.tickets === null) {
+            this.checkPicking();
+        }
+
         let order = this.state.order;
         return (
             <div className="content">
@@ -70,16 +75,31 @@ class Order extends Component {
                             </CardText>
                             <CardActions>
                                 <FlatButton
-                                    label="Enviar para picking"
+                                    label={ order.status === 'created' ? 'Enviar para picking' : 'Checar picking' }
                                     onClick={() => {
-                                        if(this.state.order.status == 'checking') {
+                                        if(this.state.order.status === 'checking') {
                                             this.checkPicking();
-                                        } else if(this.state.order.status == 'created') {
+                                        } else if(this.state.order.status === 'created') {
                                             this.toPicking();
                                         }
                                     }} />
                             </CardActions>
                         </Card>
+                    </div>
+                    <div className="tickets">
+                        {
+                            !this.state.tickets ? null : 
+                            <div>
+                                { this.state.tickets.map( (ticket) =>  (
+                                    <div className="tickets-product">
+                                        Produto: { ticket.product.name }
+                                        <br />
+                                        Chamado: { ticket.motivo }
+                                    </div>
+                                    )
+                                )}
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

@@ -4,6 +4,8 @@ class CreateTicket < ActiveRecord::Migration[5.1]
       t.string :ticket
       t.references :order, type: :uuid
       t.references :product, type: :uuid
+
+      t.timestamps
     end
   end
 end

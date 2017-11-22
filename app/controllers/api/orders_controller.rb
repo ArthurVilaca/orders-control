@@ -2,7 +2,7 @@ require 'httparty'
 
 module Api
   class OrdersController < ApplicationController
-    before_action :set_order, only: %i[show update destroy]
+    before_action :set_order, only: %i[show update destroy check_picking]
 
     # @response_status 200
     # @response_root orders
@@ -94,15 +94,15 @@ module Api
 
     def picking
       order = Order.find(params[:id])
+      @url_picking = 'http://chamadoapi.azurewebsites.net/chamado'
       params[:products].each { |value|
         product = Product.find(value[:id])
-        @url_picking = 'http://chamadoapi.azurewebsites.net/chamado'
         @result = HTTParty.post(@url_picking.to_str,
           :body => {
                   :status => 0,
-                  :idProduto => "00000000-0000-0000-0000-000000000000",
-                  :descricao => "string",
-                  :quantidade => 0
+                  :idProduto => value[:id],
+                  :descricao => value[:description],
+                  :quantidade => 1
                 }.to_json,
           :headers => { 'Content-Type' => 'application/json' } )
 
@@ -115,6 +115,20 @@ module Api
 
       order.update status: :checking
       render json: @result.parsed_response
+    end
+
+    def check_picking
+      tickets = Ticket.where( order: @order.id )
+      result = []
+      tickets.each { |ticket|
+        @url_picking = 'http://chamadoapi.azurewebsites.net/' + ticket.ticket
+        response = HTTParty.get(@url_picking.to_str)
+
+        response.parsed_response['product'] = Product.find(response.parsed_response['idProduto'])
+        result.push( response.parsed_response )
+      }
+
+      render json: result
     end
   end
 end

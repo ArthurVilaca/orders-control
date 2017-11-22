@@ -9,8 +9,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :orders do
-      collection do
-        post :picking
+      member do
+        post :picking, to: 'orders#picking'
+        get :picking, to: 'orders#check_picking'
       end
     end
     resources :clients
