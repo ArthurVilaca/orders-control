@@ -18,8 +18,8 @@ class App extends Component {
     return (
       <MuiThemeProvider>
         <div className="App">
-          { !currentPath.includes(`/login`) ? <Menu /> : null }
-          { currentPath ===  "/" ? <Redirect to={"/login"}/> : null }
+          <Menu />
+          { currentPath ===  "/" && <Redirect to={"/home"}/> }
           <Route exact path="/login" component={Login}/>
           <Route exact path="/clients" component={Clients}/>
           <Route exact path="/client/new" component={Client}/>

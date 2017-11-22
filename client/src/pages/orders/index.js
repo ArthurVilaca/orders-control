@@ -25,42 +25,42 @@ class Orders extends Component {
     }
 
     render() {
-        if(!this.state.orders) {
+        if (!this.state.orders) {
             return null;
         }
         return (
             <div className="content">
                 {
-                    this.state.orders.map( (order) => {
+                    this.state.orders.map((order) => {
                         return (
                             <Card key={order.id}>
-                                <CardTitle title={ order.id } subtitle={ order.client.name } />
+                                <CardTitle title={order.client.name} subtitle={order.id} />
                                 <CardText>
-                                    { order.products.map( (product) =>  (
-                                            <div>
-                                                Produto: { product.name }
-                                                <br />
-                                            </div>
-                                        )
+                                    {order.products.map((product) => (
+                                        <div key={product.id}>
+                                            Produto: {product.name}
+                                            <br />
+                                        </div>
+                                    )
                                     )}
                                     <br />
-                                    Status: { order.status }
+                                    Status: {order.status}
                                     <br />
-                                    Data Pedido: { moment(order.created_at).format('L') }
+                                    Data Pedido: {moment(order.created_at).format('L')}
                                     <br />
-                                    Total: R$ { order.total }
+                                    Total: R$ {order.total}
                                 </CardText>
                                 <CardActions>
                                     <FlatButton
                                         label="Acompanhamento"
                                         onClick={() => {
-                                            this.props.history.push('/order/' + order.id )
+                                            this.props.history.push('/order/' + order.id)
                                         }} />
                                     <FlatButton
                                         label="Cancelar Pedido"
                                         onClick={() => {
                                         }}
-                                        />
+                                    />
                                 </CardActions>
                             </Card>
                         )

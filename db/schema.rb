@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 20171121195603) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "tickets", force: :cascade do |t|
+  create_table "tickets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "ticket"
     t.uuid "order_id"
     t.uuid "product_id"

@@ -57,10 +57,10 @@ class Order extends Component {
                 <div>
                     <div className="div">
                         <Card key={order.id}>
-                            <CardTitle title={ order.id } subtitle={ order.client.name } />
+                            <CardTitle title={order.client.name} subtitle={order.id} />
                             <CardText>
                                 { order.products.map( (product) =>  (
-                                    <div>
+                                    <div key={product.id}>
                                         Produto: { product.name }
                                         <br />
                                     </div>
