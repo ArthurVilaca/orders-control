@@ -16,7 +16,7 @@ class Menu extends Component {
 
     render() {
         return (
-            <div className="content">
+            <div>
                 <AppBar
                     title="Gerenciamento de pedidos"
                     iconClassNameRight="muidocs-icon-navigation-expand-more"

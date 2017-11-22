@@ -33,7 +33,7 @@ class Orders extends Component {
                 {
                     this.state.orders.map((order) => {
                         return (
-                            <Card key={order.id}>
+                            <Card key={order.id} className="Order-card">
                                 <CardTitle title={order.client.name} subtitle={order.id} />
                                 <CardText>
                                     {order.products.map((product) => (
