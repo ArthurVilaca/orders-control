@@ -33,6 +33,18 @@ const statusToColorMapping = {
     checking: '#f7a35c',
     prepared_to_pay: '#90ed7d',
 }
+const paymentTypeToColorMapping = {
+    credito: '#36a2eb',
+    debito: '#ffce55',
+    boleto: '#f7a35c',
+    paypal: '#90ed7d',
+}
+const paymentTypeNameMapping = {
+    credito: 'Crédito',
+    debito: 'Débito',
+    boleto: 'Boleto',
+    paypal: 'Paypal',
+}
 
 const formatOrdersData = orders => {
     const statuses = []
@@ -91,6 +103,32 @@ const formatProductData = orders => {
     }
 }
 
+const formatOrderPaymentTypeData = orders => {
+    const paymentTypes = []
+    const statusValues = {}
+    orders.forEach(order => {
+        const { payment_type: paymentType } = order
+        if (!paymentTypes.includes(paymentType)) {
+            paymentTypes.push(paymentType)
+        }
+        if (statusValues[paymentType]) {
+            statusValues[paymentType] += 1
+        } else {
+            statusValues[paymentType] = 1
+        }
+    })
+    const colors = paymentTypes.map(type => paymentTypeToColorMapping[type])
+    const humanizedPaymentTypes = paymentTypes.map(type => paymentTypeNameMapping[type])
+
+    return {
+        labels: humanizedPaymentTypes,
+        datasets: [{
+            backgroundColor: colors,
+            data: Object.values(statusValues)
+        }]
+    }
+}
+
 class Home extends Component {
     state = {
         orders: null
@@ -113,15 +151,25 @@ class Home extends Component {
                 {orders &&
                     <div style={{ display: 'flex', width: '100%' }}>
                         <Card style={{ marginRight: 10, flex: 1 }}>
-                            <CardHeader title="Número de pedidos por status" />
+                            <CardHeader title="Número de pedidos por status" textStyle={{ paddingRight: 0 }} titleStyle={{ paddingRight: 0 }} />
                             <CardText>
                                 <Doughnut data={formatOrdersData(orders)} />
                             </CardText>
                         </Card>
                         <Card style={{ marginLeft: 10, flex: 1 }}>
-                            <CardHeader title="Produtos mais famosos" />
+                            <CardHeader title="Produtos mais famosos" textStyle={{ paddingRight: 0 }} titleStyle={{ paddingRight: 0 }} />
                             <CardText>
                                 <Bar data={formatProductData(orders)} options={barChartOptions} />
+                            </CardText>
+                        </Card>
+                    </div>
+                }
+                {orders &&
+                    <div style={{ display: 'flex', width: '100%', justifyContent: 'center', marginTop: 15 }}>
+                        <Card>
+                            <CardHeader title="Pedidos por tipo de pagamento" textStyle={{ paddingRight: 0 }} titleStyle={{ paddingRight: 0 }} />
+                            <CardText>
+                                <Doughnut data={formatOrderPaymentTypeData(orders)} />
                             </CardText>
                         </Card>
                     </div>
