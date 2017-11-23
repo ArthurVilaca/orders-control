@@ -15,7 +15,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build:prod": "NODE_ENV=production yarn build && mv build/* ../public",
+    "build:prod": "NODE_ENV=production yarn build && rm -rf ../public/static && mv build/* ../public",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
