@@ -22,6 +22,7 @@ module Api
     # @body_parameter [float] total
     # @body_parameter [integer] instalments
     # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado, 3: chamado criado, 4: preparado para pagar
+    # @body_parameter [integer] payment_type - 0: credito, 1: debito, 2: boleto, 3: paypal
     # @body_parameter [Input::ClientSerializer] client
     # @body_parameter [array<Input::ProductSerializer>] products
     # @response_status 200
@@ -29,13 +30,15 @@ module Api
     # @response_class OrderSerializer
     def create
       client = Client.find_or_initialize_by(email: client_params[:email])
-      client_params.each{ |key, value| client[key] = value }
+      client_params.each do |key, value|
+        client[key] = value if value.present?
+      end
       products_params = params[:products] || []
       products = products_params.map do |product_param|
         product = Product.find_or_initialize_by(id: product_param[:id])
-        product.name = product_param[:name]
-        product.description = product_param[:description]
-        product.price = product_param[:price]
+        product.name = product_param[:name] if product_param[:name].present?
+        product.description = product_param[:description] if product_param[:description].present?
+        product.price = product_param[:price] if product_param[:price].present?
         product
       end
       @order = Order.new(order_params)
@@ -52,6 +55,7 @@ module Api
     # @body_parameter [float] total
     # @body_parameter [integer] instalments
     # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado, 3: chamado criado, 4: preparado para pagar
+    # @body_parameter [integer] payment_type - 0: credito, 1: debito, 2: boleto, 3: paypal
     # @body_parameter [Input::ClientSerializer] client
     # @body_parameter [array<Input::ProductSerializer>] products
     # @response_status 200
@@ -59,16 +63,18 @@ module Api
     # @response_class OrderSerializer
     def update
       client = Client.find_or_initialize_by(email: client_params[:email])
-      client_params.to_h.compact.each{ |key, value| client[key] = value }
+      client_params.each do |key, value|
+        client[key] = value if value.present?
+      end
       products_params = params[:products] || []
 
       @order.client.assign_attributes(client_params) if params[:client]
       products_params.each do |product_param|
         current_product = @order.products.all.find{|p| p.id == product_param[:id]}
         if current_product
-          current_product.name = product_param[:name]
-          current_product.description = product_param[:description]
-          current_product.price = product_param[:price]
+          current_product.name = product_param[:name] if product_param[:name].present?
+          current_product.description = product_param[:description] if product_param[:description].present?
+          current_product.price = product_param[:price] if product_param[:price].present?
           current_product.save!
         else
           @order.products.build(id: product_param[:id], name: product_param[:name], description: product_param[:description], price: product_param[:price])
@@ -92,7 +98,7 @@ module Api
     end
 
     def order_params
-      params.permit(:total, :instalments, :status)
+      params.permit(:total, :instalments, :status, :payment_type)
     end
 
     def client_params
@@ -114,7 +120,7 @@ module Api
 
         ticket_id = result.parsed_response
         ticket = Ticket.new( ticket: ticket_id )
-        ticket.order = order
+        ticket.order = @order
         ticket.product = product
 
         ticket.save
@@ -152,7 +158,7 @@ module Api
     def pay
       body = {
         valor: @order.total,
-        tipo: 'credito',
+        tipo: @order.payment_type,
         dataEfetivacao: Time.now.strftime('%Y-%m-%d')
       }
       payment_url = "#{finance_base_url}/conta"
