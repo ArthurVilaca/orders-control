@@ -31,7 +31,13 @@ module Api
       client = Client.find_or_initialize_by(email: client_params[:email])
       client_params.each{ |key, value| client[key] = value }
       products_params = params[:products] || []
-      products = products_params.map{|product_param| Product.find_or_initialize_by(id: product_param[:id], name: product_param[:name], description: product_param[:description])}
+      products = products_params.map do |product_param|
+        product = Product.find_or_initialize_by(id: product_param[:id])
+        product.name = product_param[:name]
+        product.description = product_param[:description]
+        product.price = product_param[:price]
+        product
+      end
       @order = Order.new(order_params)
       @order.products = products
       @order.client = client
@@ -62,9 +68,10 @@ module Api
         if current_product
           current_product.name = product_param[:name]
           current_product.description = product_param[:description]
+          current_product.price = product_param[:price]
           current_product.save!
         else
-          @order.products.build(id: product_param[:id], name: product_param[:name], description: product_param[:description])
+          @order.products.build(id: product_param[:id], name: product_param[:name], description: product_param[:description], price: product_param[:price])
         end
       end
 
