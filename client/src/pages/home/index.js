@@ -144,7 +144,7 @@ class Home extends Component {
         const { orders }  = this.state
         return (
             <div className="content" style={{ maxWidth: 1000 }}>
-                <img src={ gordinho } style={{ marginBottom: 50 }} height={250} />
+                <img src={ gordinho } style={{ marginBottom: 50, display: 'none' }} height={250} />
                 <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                     {!orders && <Spinner name="circle" color="blue" />}
                 </div>

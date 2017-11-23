@@ -149,8 +149,10 @@ module Api
         response.parsed_response
       }
       tickets_status = result.map{ |ticket_data| ticket_data['status'] }
-      set_order_status(tickets_status)
-      @order.save!
+      if @order.status != :paid
+        set_order_status(tickets_status)
+        @order.save!
+      end
 
       render json: { tickets: result, order: JSON.parse(@order.to_json(include: %i[client products])) }
     end
@@ -158,11 +160,12 @@ module Api
     def pay
       body = {
         valor: @order.total,
-        tipo: @order.payment_type,
+        tipo: 'credito',
         dataEfetivacao: Time.now.strftime('%Y-%m-%d')
-      }
+    }.to_json
       payment_url = "#{finance_base_url}/conta"
       response = HTTParty.post(payment_url, body: body, headers: { 'Content-Type' => 'application/json' })
+      debugger
       @order.update(status: :paid) if response.code == 200 || response.code == 204
 
       render_show_order
