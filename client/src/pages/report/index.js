@@ -4,8 +4,7 @@ import { withRouter } from 'react-router-dom'
 import './report.css';
 
 import axios from 'axios';
-
-import { Card, CardTitle, CardText } from 'material-ui/Card';
+import moment from 'moment';
 
 class Report extends Component {
     constructor(props) {
@@ -28,24 +27,26 @@ class Report extends Component {
         }
         return (
             <div className="content">
+                <table className="table">
+                        <tr>
+                            <td>id</td>
+                            <td>Produto</td>
+                            <td>Data</td>
+                            <td>Chamado</td>
+                        </tr>
                 {
                     this.state.tickets.map((ticket) => {
                         return (
-                            <Card key={ticket.id}>
-                                <CardTitle title={ticket.ticket} />
-                                <CardText>
-                                    <div key={ticket.product.id}>
-                                        Produto: {ticket.product.name}
-                                        <br />
-                                        Status: {ticket.order.status}
-                                        <br />
-                                        Valor: {ticket.order.total}
-                                    </div>
-                                </CardText>
-                            </Card>
+                            <tr>
+                                <td>{ ticket.id }</td>
+                                <td>{ ticket.product.name }</td>
+                                <td>{ moment(ticket.created_at).format('L') }</td>
+                                <td>{ ticket.ticket }</td>
+                            </tr>
                         )
                     })
                 }
+                </table>
             </div>
         );
     }
