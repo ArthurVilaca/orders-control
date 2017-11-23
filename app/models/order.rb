@@ -6,7 +6,7 @@ class Order < ApplicationRecord
 
   validates :status, presence: true
 
-  enum status: %i[created paid cancelled checking]
+  enum status: %i[created paid cancelled checking prepared_to_pay]
 
   accepts_nested_attributes_for :client, :products
 

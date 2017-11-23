@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     resources :orders do
       member do
         post :picking, to: 'orders#picking'
+        post :pay, to: 'orders#pay'
         get :picking, to: 'orders#check_picking'
       end
     end

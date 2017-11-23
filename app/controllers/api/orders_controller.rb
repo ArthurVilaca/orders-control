@@ -2,7 +2,7 @@ require 'httparty'
 
 module Api
   class OrdersController < ApplicationController
-    before_action :set_order, only: %i[show update destroy check_picking]
+    before_action :set_order, only: %i[show update destroy check_picking picking pay]
 
     # @response_status 200
     # @response_root orders
@@ -21,7 +21,7 @@ module Api
 
     # @body_parameter [float] total
     # @body_parameter [integer] instalments
-    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado, 3: chamado criado
+    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado, 3: chamado criado, 4: preparado para pagar
     # @body_parameter [Input::ClientSerializer] client
     # @body_parameter [array<Input::ProductSerializer>] products
     # @response_status 200
@@ -45,7 +45,7 @@ module Api
 
     # @body_parameter [float] total
     # @body_parameter [integer] instalments
-    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado, 3: chamado criado
+    # @body_parameter [integer] status - 0: criado, 1: pago, 2: cancelado, 3: chamado criado, 4: preparado para pagar
     # @body_parameter [Input::ClientSerializer] client
     # @body_parameter [array<Input::ProductSerializer>] products
     # @response_status 200
@@ -93,11 +93,10 @@ module Api
     end
 
     def picking
-      order = Order.find(params[:id])
-      @url_picking = 'http://chamadoapi.azurewebsites.net/chamado'
-      params[:products].each { |value|
+      url_picking = "#{tickets_base_url}/chamado"
+      tickets = params[:products].map do |value|
         product = Product.find(value[:id])
-        @result = HTTParty.post(@url_picking.to_str,
+        result = HTTParty.post(url_picking.to_str,
           :body => {
                   status: 2,
                   idProduto: value[:id],
@@ -106,29 +105,73 @@ module Api
                 }.to_json,
           :headers => { 'Content-Type' => 'application/json' } )
 
-        @ticket = Ticket.new( ticket: @result.parsed_response )
-        @ticket.order = order
-        @ticket.product = product
+        ticket_id = result.parsed_response
+        ticket = Ticket.new( ticket: ticket_id )
+        ticket.order = order
+        ticket.product = product
 
-        @ticket.save
-      }
+        ticket.save
+        ticket_id
+      end
+      tickets_status = tickets.map do |ticket_id|
+        response = HTTParty.get(
+          "#{tickets_base_url}/#{ticket_id}",
+          headers: { 'Content-Type' => 'application/json' }
+        ).parsed_response || {}
+        response['status']
+      end
 
-      order.update status: :checking
-      render json: @result.parsed_response
+      set_order_status(tickets_status)
+
+      @order.save
+      render json: tickets
     end
 
     def check_picking
       tickets = Ticket.where( order: @order.id )
-      result = []
-      tickets.each { |ticket|
-        @url_picking = 'http://chamadoapi.azurewebsites.net/' + ticket.ticket
-        response = HTTParty.get(@url_picking.to_str)
+      result = tickets.map { |ticket|
+        response = HTTParty.get("#{tickets_base_url}/#{ticket.ticket}", headers: { 'Content-Type' => 'application/json' })
 
         response.parsed_response['product'] = Product.find(response.parsed_response['idProduto'])
-        result.push( response.parsed_response )
+        response.parsed_response
       }
+      tickets_status = result.map{ |ticket_data| ticket_data['status'] }
+      set_order_status(tickets_status)
+      @order.save!
 
-      render json: result
+      render json: { tickets: result, order: JSON.parse(@order.to_json(include: %i[client products])) }
     end
+
+    def pay
+      body = {
+        valor: @order.total,
+        tipo: 'credito',
+        dataEfetivacao: Time.now.strftime('%Y-%m-%d')
+      }
+      payment_url = "#{finance_base_url}/conta"
+      response = HTTParty.post(payment_url, body: body, headers: { 'Content-Type' => 'application/json' })
+      @order.update(status: :paid) if response.code == 200 || response.code == 204
+
+      render_show_order
+    end
+
+    private
+      def set_order_status(tickets_status)
+        if tickets_status.all? {|status| status == 3}
+          @order.status = :prepared_to_pay
+        elsif tickets_status.any? {|status| status == 5}
+          @order.status = :cancelled
+        else 
+          @order.status = :checking
+        end
+      end
+
+      def tickets_base_url
+        'http://chamadoapi.azurewebsites.net'
+      end
+
+      def finance_base_url
+        'http://165.227.67.87/api'
+      end
   end
 end

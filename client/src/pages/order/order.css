@@ -7,3 +7,10 @@
 .tickets-product {
     padding: 10px;
 }
+
+.paid-order-message {
+    color: blue;
+    font-size: 18px;
+    padding: 5px;
+    text-align: center;
+}
