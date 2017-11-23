@@ -30,6 +30,16 @@ class Orders extends Component {
         }
         return (
             <div className="content">
+                <div>
+                    <FlatButton
+                        label="Relatorio"
+                        className="button-report"
+                        onClick={() => {
+                            this.props.history.push('/report')
+                        }}
+                        />
+                </div>
+                <hr />
                 {
                     this.state.orders.map((order) => {
                         return (

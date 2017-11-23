@@ -10,6 +10,7 @@ import Clients from './pages/clients'
 import Client from './pages/client'
 import Orders from './pages/orders'
 import Order from './pages/order'
+import Report from './pages/report'
 
 class App extends Component {
   render() {
@@ -24,6 +25,7 @@ class App extends Component {
           <Route exact path="/client/:id" component={Client}/>
           <Route exact path="/orders" component={Orders}/>
           <Route exact path="/order/:id" component={Order}/>
+          <Route exact path="/report" component={Report}/>
           <Route exact path="/home" component={Home}/>
         </div>
       </MuiThemeProvider>
