@@ -165,7 +165,6 @@ module Api
     }.to_json
       payment_url = "#{finance_base_url}/conta"
       response = HTTParty.post(payment_url, body: body, headers: { 'Content-Type' => 'application/json' })
-      debugger
       @order.update(status: :paid) if response.code == 200 || response.code == 204
 
       render_show_order
