@@ -9,6 +9,16 @@ import './home.css';
 
 import gordinho from '../../assets/gordinho.gif';
 
+const barChartOptions = {
+    scales: {
+        yAxes: [{
+            ticks: {
+                beginAtZero: true
+            }
+        }]
+    }
+}
+
 const statusNameMapping = {
     created: 'Criado',
     paid: 'Pago',
@@ -105,13 +115,13 @@ class Home extends Component {
                         <Card style={{ marginRight: 10, flex: 1 }}>
                             <CardHeader title="Número de pedidos por status" />
                             <CardText>
-                                <Doughnut data={formatOrdersData(orders)}/>
+                                <Doughnut data={formatOrdersData(orders)} />
                             </CardText>
                         </Card>
                         <Card style={{ marginLeft: 10, flex: 1 }}>
                             <CardHeader title="Produtos mais famosos" />
                             <CardText>
-                                <Bar data={formatProductData(orders)}/>
+                                <Bar data={formatProductData(orders)} options={barChartOptions} />
                             </CardText>
                         </Card>
                     </div>
