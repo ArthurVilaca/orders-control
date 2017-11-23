@@ -55,10 +55,11 @@ const formatProductData = orders => {
     const productNames = []
     orders.forEach(order => {
         order.products.forEach(product => {
-            if (numberOfProductOrders[product.id]) {
-                numberOfProductOrders[product.id] += 1
+            if (!product.name) return
+            if (numberOfProductOrders[product.name]) {
+                numberOfProductOrders[product.name] += 1
             } else {
-                numberOfProductOrders[product.id] = 1
+                numberOfProductOrders[product.name] = 1
             }
             if (!productNames.includes(product.name)) {
                 productNames.push(product.name)
