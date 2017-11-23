@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       end
     end
     resources :clients
+    resources :tickets
   end
 
   get '*path', to: 'application#index'
